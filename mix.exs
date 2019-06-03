@@ -1,4 +1,4 @@
-defmodule Clijo.MixProject do
+defmodule CliJo.MixProject do
   use Mix.Project
 
   def project do

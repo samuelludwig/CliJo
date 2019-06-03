@@ -1,4 +1,4 @@
-defmodule Clijo do
+defmodule CliJo do
   @moduledoc """
   Documentation for Clijo.
   """
