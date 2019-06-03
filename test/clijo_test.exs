@@ -1,8 +1,8 @@
-defmodule CliJoTest do
+defmodule ClijoTest do
   use ExUnit.Case
-  doctest CliJo
+  doctest Clijo
 
   test "greets the world" do
-    assert CliJo.hello() == :world
+    assert Clijo.hello() == :world
   end
 end
