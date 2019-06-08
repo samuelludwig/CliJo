@@ -17,7 +17,7 @@ defmodule Clijo.ConfigManager do
   def set_home_directory(path) do
     if File.exists?(path) do
       path = Path.expand(path)
-      write_to_file = &(File.write!(@user_config_path, &1))
+      write_to_file = &File.write!(@user_config_path, &1)
       # Update settings map and write to file
       %{get_user_config() | "home_directory" => path}
       |> Jason.encode!()
