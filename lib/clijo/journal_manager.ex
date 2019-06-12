@@ -67,8 +67,17 @@ defmodule Clijo.JournalManager do
     IO.puts(contents)
   end
 
+  @doc """
+  Same functionality of `new_entry/1`, but instead writes input beneath
+  the 'Tasks' section of the current month's `monthly_log`.
+
+  Returns `{:ok, path_to_monthly_log}` if successful.
+  """
+  @doc since: "June 12th, 2019"
   def add_task_to_monthly_log() do
-    # TODO
+    {:ok, path} = make_monthly_log()
+    get_input(path)
+    {:ok, path}
   end
 
   def migrate_task() do
