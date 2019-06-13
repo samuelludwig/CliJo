@@ -39,6 +39,14 @@ defmodule Clijo.ConfigManager do
     |> Map.get("home_directory")
   end
 
+  def define_prefixes() do
+    # TODO
+  end
+
+  def get_prefix(item) do
+    # TODO
+  end
+
   # Returns a map of the settings defined in `user_config.json`
   defp get_user_config() do
     @user_config_path

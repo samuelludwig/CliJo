@@ -85,6 +85,20 @@ defmodule Clijo.JournalManager do
   end
 
   @doc """
+  Takes in a `string` and will return a list of strings dependent on
+  where the designated `item`'s prefix occurs as the first item on a
+  newline.
+
+  Returns `{:ok, list_of_strings}` if successful.
+  """
+  @doc since: "June 13th, 2019"
+  def parse_items(string, item) do
+    # TODO implement Clijo.ConfigManager.define_prefixes/0 and .get_prefix/1
+    prefix = "\n#{Clijo.ConfigManager.get_prefix(item)}"
+    {:ok, String.split(string, prefix)}
+  end
+
+  @doc """
   Creates a daily log in the home/current_year/current_month
   directory if it does not already exist. If `log_name` is provided,
   then the file `'log_name'.md` will be created. If `log_name` is not
