@@ -25,25 +25,25 @@ A Bullet-Journal application for the CLI.
 
 ## Commands
 
-- Define Home Directory \[full_or_relative_path\]
+- [ ] Define Home Directory \[full_or_relative_path\]
   - Defines a location to put all files from CliJo
   - Changing home directory should move all files automatically
-- New Daily Log \[log_name (optional)\]
+- [ ] New Daily Log \[log_name (optional)\]
   - Creates a new daily log titled `log_name`
   - Defaults to month.day \<space\> day_of_week (ex: 5.25 SAT)
-- New Entry \[log_name (optional)\]
+- [ ] New Entry \[log_name (optional)\]
   - Appends an entry (one or more lines of text) to the file for `log_name`
   - If `log_name` is not provided, it will default to the current daily log, if a daily log does not yet exist, it will be created
   - If `log_name` *is* given, and the log does not exist, it too will be created
-- Edit Log \[log_name, line_num (optional)\]
+- [ ] Edit Log \[log_name, line_num (optional)\]
   - If no line_num given in command: Displays full log with numbered lines, and awaits input of line_num to edit
   - Once line_num is given, the user will write out the text they want to replace it with
-- Migrate Task \[log_from, line_num (optional), log_to (optional)\]
-- View Index
-- View Future Log
-- View Monthly Log
-- View Daily Log \[log_name\]
-- View Tasks \[day | week | month\]
+- [ ] Migrate Task \[log_from, line_num (optional), log_to (optional)\]
+- [ ] View Index
+- [ ] View Future Log
+- [ ] View Monthly Log
+- [ ] View Daily Log \[log_name\]
+- [ ] View Tasks \[day | week | month\]
 
 ***
 
