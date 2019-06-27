@@ -93,7 +93,6 @@ defmodule Clijo.JournalManager do
   """
   @doc since: "June 13th, 2019"
   def parse_items(string, item) do
-    # TODO implement Clijo.ConfigManager.define_prefixes/0 and .get_prefix/1
     prefix = "\n#{Clijo.ConfigManager.get_prefix(item)}"
     {:ok, String.split(string, prefix)}
   end

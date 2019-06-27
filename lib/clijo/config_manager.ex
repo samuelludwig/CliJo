@@ -7,7 +7,7 @@ defmodule Clijo.ConfigManager do
 
   # TODO Need to clean up this module, there is a lot of repetition that
   # can be cut down, and a lot of unnecessary instructions being
-  # performed. 
+  # performed.
 
   @user_config_path "./config/user_config.json"
 
@@ -59,9 +59,9 @@ defmodule Clijo.ConfigManager do
     # Update settings map and write to file
     %{user_config | "prefixes" => new_prefixes}
     |> Jason.encode!()
-	|> write_to_file.()
+	  |> write_to_file.()
 
-	{:ok, new_prefixes}
+	  {:ok, new_prefixes}
   end
 
   @doc """
@@ -73,21 +73,21 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def delete_prefix(item) do
-	{:ok, user_config} = get_user_config()
-	{:ok, original_prefixes} = get_prefixes()
+	  {:ok, user_config} = get_user_config()
+	  {:ok, original_prefixes} = get_prefixes()
 
-	if Map.has_key?(original_prefixes, item) do
-		new_prefixes = Map.delete(original_prefixes, item)
-		write_to_file = &File.write!(@user_config_path, &1)
-		# Update settings map and write to file
+	  if Map.has_key?(original_prefixes, item) do
+		  new_prefixes = Map.delete(original_prefixes, item)
+		  write_to_file = &File.write!(@user_config_path, &1)
+		  # Update settings map and write to file
    		%{user_config | "prefixes" => new_prefixes}
 	    |> Jason.encode!()
   		|> write_to_file.()
-    
+
 	   	{:ok, new_prefixes}
-	else
-		{:error, "prefix: #{item} does not exist."}
-	end
+	  else
+		  {:error, "prefix: #{item} does not exist."}
+	  end
   end
 
   @doc """
@@ -97,10 +97,10 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def get_prefixes() do
-	{:ok, user_config} = get_user_config()
-  	
-	user_config
-	|> Map.fetch("prefixes")
+	  {:ok, user_config} = get_user_config()
+
+	  user_config
+	  |> Map.fetch("prefixes")
   end
 
   @doc """
