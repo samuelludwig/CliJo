@@ -40,7 +40,9 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 7th, 2019"
   def get_home_directory() do
-    get_user_config()
+    {:ok, config} = get_user_config()
+
+    config
     |> Map.get("home_directory")
   end
 
