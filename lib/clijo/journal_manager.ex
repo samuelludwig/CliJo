@@ -36,7 +36,9 @@ defmodule Clijo.JournalManager do
         |> Enum.map(&Calendar.ISO.day_of_week(current_year, current_month, &1))
         |> map_days_of_week_to_letters()
 
-      # TODO: Might need to cut this up if I want to right-justify the day letters and numbers accross the board. *Should* be as simple as adding a space to the beginning of the first 9 lines.
+      # TODO: Might need to cut this up if I want to right-justify the day
+      # letters and numbers accross the board. *Should* be as simple as adding a
+      # space to the beginning of the first 9 lines.
       monthly_log_template =
         Enum.zip(list_of_day_numbers, list_of_day_letters)
         |> Enum.map(fn {num, char} -> "#{num} #{char}" end)
@@ -80,8 +82,45 @@ defmodule Clijo.JournalManager do
     {:ok, path}
   end
 
-  def migrate_task() do
-    # TODO
+  @doc """
+  Displays `log_from` and waits for the user to enter the line number of the
+  task they want to migrate, after the line number is entered operations proceed
+  as if migrate_task/3 was called.
+  """
+  @doc since: "June 28th, 2019"
+  def migrate_task(log_from, log_to \\ make_monthly_log()) do
+  end
+
+  @doc """
+  Copies the task from `log_from` on `line_num` to `log_to`, changes the prefix
+  of the copied task in `log_from` to the "migrated" prefix. The task will be
+  appended to the bottom of `log_to`, whether it be a daily log or a monthly
+  log.
+
+  Returns `{:ok, path_to_log_to}` if successful. If unsuccessful, returns
+  `{:error, cause_of_error}`.
+  """
+  @doc since: "June 28th, 2019"
+  def migrate_task_explicit(log_from, line_num, log_to) do
+    if File.exists?(log_from) do
+      task =
+        File.stream!(log_from)
+        |> Enum.at(line_num-1)
+        |> String.trim()
+
+      if is_task?(task) do
+        File.write!(log_to, task, [:append])
+
+        migrated_task = change_prefix(task, "migrated_task_prefix")
+        File.stream!(log_from)
+        |> List.replace_at(line_num-1, migrated_task)
+      else
+        {:error, "#{task} is not a task, tasks have a prefix that looks like #{Clijo.ConfigManager.get_prefix("task_prefix")}."}
+      end
+
+    else
+      {:error, "File #{log_from} does not exist."}
+    end
   end
 
   @doc """
@@ -265,5 +304,19 @@ defmodule Clijo.JournalManager do
         true -> "error in days supplied"
       end
     end
+  end
+
+  # Takes in a string and returns `true` if the string begins with the "task"
+  # prefix, otherwise it returns false.
+  defp is_task?(string) do
+    task_prefix = Clijo.ConfigManager.get_prefix("task_prefix")
+
+    string
+    |> String.trim_leading()
+    |> String.starts_with?(task_prefix)
+  end
+
+  # Takes in an `item` string and switches its prefix to `prefix`.
+  defp change_prefix(item, prefix) do
   end
 end
