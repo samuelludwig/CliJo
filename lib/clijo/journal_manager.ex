@@ -111,11 +111,12 @@ defmodule Clijo.JournalManager do
       if is_task?(task) do
         File.write!(log_to, task, [:append])
 
-        migrated_task = change_prefix(task, "migrated_task_prefix")
+        migrated_task = change_prefix(task, "task_prefix", "migrated_task_prefix")
         File.stream!(log_from)
         |> List.replace_at(line_num-1, migrated_task)
       else
-        {:error, "#{task} is not a task, tasks have a prefix that looks like #{Clijo.ConfigManager.get_prefix("task_prefix")}."}
+        {:error, "#{task} is not a task, tasks have a prefix that looks like
+        #{Clijo.ConfigManager.get_prefix("task_prefix")}."}
       end
 
     else
@@ -316,7 +317,12 @@ defmodule Clijo.JournalManager do
     |> String.starts_with?(task_prefix)
   end
 
-  # Takes in an `item` string and switches its prefix to `prefix`.
-  defp change_prefix(item, prefix) do
+  # Takes in an `item` string and returns it with its prefix switched to
+  # `prefix`.
+  defp change_prefix(item, from_prefix, to_prefix) do
+    from_prefix = Clijo.ConfigManager.get_prefix(from_prefix)
+    to_prefix = Clijo.ConfigManager.get_prefix(to_prefix)
+    [whitespace, item_content] = String.split(item, from_prefix, parts: 2)
+    whitespace <> to_prefix <> item_content
   end
 end
