@@ -84,11 +84,14 @@ defmodule Clijo.JournalManager do
 
   @doc """
   Displays `log_from` and waits for the user to enter the line number of the
-  task they want to migrate, after the line number is entered operations proceed
-  as if migrate_task/3 was called.
+  task they want to migrate, after the line number entered
+  migrate_task_explicit/3 is called with the derived fields.
   """
-  @doc since: "June 28th, 2019"
-  def migrate_task(log_from, log_to \\ make_monthly_log()) do
+  @doc since: "July 13th, 2019"
+  def migrate_task(log_from, log_to \\ elem(make_monthly_log(), 1)) do
+    display_daily_log(log_from)
+    line_num = IO.gets("\nEnter line number of task you want to migrate: ")
+    migrate_task_explicit(log_from, line_num, log_to)
   end
 
   @doc """
@@ -106,14 +109,18 @@ defmodule Clijo.JournalManager do
       task =
         File.stream!(log_from)
         |> Enum.at(line_num-1)
-        |> String.trim()
+        |> String.trim_leading()
 
       if is_task?(task) do
         File.write!(log_to, task, [:append])
 
         migrated_task = change_prefix(task, "task_prefix", "migrated_task_prefix")
-        File.stream!(log_from)
-        |> List.replace_at(line_num-1, migrated_task)
+        updated_log_from =
+          File.stream!(log_from)
+          |> Enum.to_list()
+          |> List.replace_at(line_num-1, migrated_task)
+
+        File.write!(log_from, updated_log_from, [:write])
       else
         {:error, "#{task} is not a task, tasks have a prefix that looks like
         #{Clijo.ConfigManager.get_prefix("task_prefix")}."}
@@ -206,10 +213,10 @@ defmodule Clijo.JournalManager do
     |> String.split("\n", trim: false)
     |> Enum.with_index(1)
     # HACK
+    # All this is done to make sure the text is properly alinged.
     |> Enum.map(fn {line, line_num} ->
       "#{line_num}#{
         cond do
-          # All this is done to make sure the text is properly alinged.
           line_num >= 1000 -> " "
           line_num >= 100 -> "  "
           line_num >= 10 -> "   "
@@ -310,7 +317,7 @@ defmodule Clijo.JournalManager do
   # Takes in a string and returns `true` if the string begins with the "task"
   # prefix, otherwise it returns false.
   defp is_task?(string) do
-    task_prefix = Clijo.ConfigManager.get_prefix("task_prefix")
+    {:ok, task_prefix} = Clijo.ConfigManager.get_prefix("task_prefix")
 
     string
     |> String.trim_leading()
@@ -320,8 +327,8 @@ defmodule Clijo.JournalManager do
   # Takes in an `item` string and returns it with its prefix switched to
   # `prefix`.
   defp change_prefix(item, from_prefix, to_prefix) do
-    from_prefix = Clijo.ConfigManager.get_prefix(from_prefix)
-    to_prefix = Clijo.ConfigManager.get_prefix(to_prefix)
+    {:ok, from_prefix} = Clijo.ConfigManager.get_prefix(from_prefix)
+    {:ok, to_prefix} = Clijo.ConfigManager.get_prefix(to_prefix)
     [whitespace, item_content] = String.split(item, from_prefix, parts: 2)
     whitespace <> to_prefix <> item_content
   end
