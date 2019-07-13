@@ -38,7 +38,7 @@ A Bullet-Journal application for the CLI.
 - [ ] Edit Log \[log_name, line_num (optional)\]
   - If no line_num given in command: Displays full log with numbered lines, and awaits input of line_num to edit
   - Once line_num is given, the user will write out the text they want to replace it with
-- [ ] Migrate Task \[log_from, line_num (optional), log_to (optional)\]
+- [x] Migrate Task \[log_from, line_num (optional), log_to (optional)\]
 - [ ] View Index
 - [ ] View Future Log
 - [x] View Monthly Log
