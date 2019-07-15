@@ -89,9 +89,12 @@ defmodule Clijo.JournalManager do
   """
   @doc since: "July 13th, 2019"
   def migrate_task(log_from, log_to \\ elem(make_monthly_log(), 1)) do
+    {:ok, path} = get_log_path(log_from)
     display_daily_log(log_from)
-    line_num = IO.gets("\nEnter line number of task you want to migrate: ")
-    migrate_task_explicit(log_from, line_num, log_to)
+    {line_num, _} =
+      IO.gets("\nEnter line number of task you want to migrate: ")
+      |> Integer.parse()
+    migrate_task_explicit(path, line_num, log_to)
   end
 
   @doc """
@@ -279,7 +282,8 @@ defmodule Clijo.JournalManager do
     {:ok, month_path}
   end
 
-  # Returns the full path of the given log `log_name`.
+  # Returns the full path of the given log `log_name` in an `{:ok, log_path}`
+  # tuple.
   defp get_log_path(log_name) do
     {:ok, path} = generate_directory()
     date = Date.utc_today()
