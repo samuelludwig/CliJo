@@ -158,20 +158,7 @@ defmodule Clijo.JournalManager do
   @doc since: "June 10th, 2019"
   def make_daily_log(log_name \\ nil) do
     {:ok, filename} = get_log_path(log_name)
-
-    header_title =
-      if is_nil(log_name) do
-        Date.utc_today()
-        |> Date.to_string()
-      else
-        log_name
-      end
-
-    # TODO Could extract this out to a separate function if we want to allow custom headers.
-    header = """
-    # #{header_title}
-
-    """
+    header = generate_daily_log_header(log_name)
 
     unless File.exists?(filename) do
       File.open(filename, [:write], fn file ->
@@ -212,22 +199,7 @@ defmodule Clijo.JournalManager do
     {:ok, path} = make_daily_log(log_name)
     {:ok, contents} = File.read(path)
 
-    contents
-    |> String.split("\n", trim: false)
-    |> Enum.with_index(1)
-    # HACK
-    # All this is done to make sure the text is properly alinged.
-    |> Enum.map(fn {line, line_num} ->
-      "#{line_num}#{
-        cond do
-          line_num >= 1000 -> " "
-          line_num >= 100 -> "  "
-          line_num >= 10 -> "   "
-          true -> "    "
-        end
-      }#{line}"
-    end)
-    |> Enum.each(&IO.puts(&1))
+    append_line_numbers_to(contents)
 
     IO.puts("----------")
   end
@@ -335,5 +307,43 @@ defmodule Clijo.JournalManager do
     {:ok, to_prefix} = Clijo.ConfigManager.get_prefix(to_prefix)
     [whitespace, item_content] = String.split(item, from_prefix, parts: 2)
     whitespace <> to_prefix <> item_content
+  end
+
+  # Generates a string to be used as a daily log header depending on the
+  # `log_name` provided.
+  defp generate_daily_log_header(log_name \\ nil) do
+    header_title =
+    if is_nil(log_name) do
+      Date.utc_today()
+      |> Date.to_string()
+    else
+      log_name
+    end
+
+  """
+  # #{header_title}
+
+  """
+  end
+
+  # Appends line numbers to a given string, it will correctly align all content
+  # up to 9999 lines.
+  defp append_line_numbers_to(string) do
+    string
+    |> String.split("\n", trim: false)
+    |> Enum.with_index(1)
+    # HACK
+    # All this is done to make sure the text is properly alinged.
+    |> Enum.map(fn {line, line_num} ->
+      "#{line_num}#{
+      cond do
+      line_num >= 1000 -> " "
+      line_num >= 100 -> "  "
+      line_num >= 10 -> "   "
+      true -> "    "
+      end
+      }#{line}"
+    end)
+    |> Enum.each(&IO.puts(&1))
   end
 end
