@@ -63,7 +63,7 @@ defmodule Clijo.JournalManager do
   Returns `:ok` if successful.
   """
   @doc since: "June 11th, 2019"
-  def display_monthly_log(year \\ Date.utc_today().year, month \\ Date.utc_today().month) do
+  def display_monthly_log(month \\ Date.utc_today().month, year \\ Date.utc_today().year) do
     path = "#{ConfigManager.get_home_directory()}/#{year}/#{month}/monthly_log.md"
     {:ok, contents} = File.read(path)
     IO.puts(contents)
@@ -200,6 +200,7 @@ defmodule Clijo.JournalManager do
     {:ok, contents} = File.read(path)
 
     append_line_numbers_to(contents)
+    |> Enum.each(&IO.puts(&1))
 
     IO.puts("----------")
   end
@@ -344,6 +345,5 @@ defmodule Clijo.JournalManager do
       end
       }#{line}"
     end)
-    |> Enum.each(&IO.puts(&1))
   end
 end
