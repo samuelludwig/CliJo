@@ -14,7 +14,7 @@ defmodule Clijo.JournalManager do
 
   @doc """
   Creates the template for a monthly log in the
-  `home/current_year/current_month` directory.
+  `home/current_year/current_month` directory if it does not already exist.
 
   Returns `{:ok, path_to_monthly_log}`
   """
