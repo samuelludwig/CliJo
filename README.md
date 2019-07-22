@@ -35,7 +35,7 @@ A Bullet-Journal application for the CLI.
   - Appends an entry (one or more lines of text) to the file for `log_name`
   - If `log_name` is not provided, it will default to the current daily log, if a daily log does not yet exist, it will be created
   - If `log_name` *is* given, and the log does not exist, it too will be created
-- [ ] Edit Log \[log_name, line_num (optional)\]
+- [x] Edit Log \[log_name, line_num (optional)\]
   - If no `line_num` given in command: Displays full log with numbered lines, and awaits input of `line_num` to edit
   - Once line_num is given, the user will write out the text they want to replace it with
 - [x] Migrate Task \[log_from, line_num (optional), log_to (optional)\]
@@ -43,7 +43,7 @@ A Bullet-Journal application for the CLI.
 - [ ] View Future Log
 - [x] View Monthly Log
 - [x] View Daily Log \[log_name\]
-- [ ] View Tasks \[day | week | month\]
+- [x] View Tasks \[day | week | month\]
 
 ***
 

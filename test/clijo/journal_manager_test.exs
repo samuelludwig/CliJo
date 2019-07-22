@@ -17,6 +17,13 @@ defmodule Clijo.JournalManagerTest do
 
   test "make_monthly_log/0 returns {:ok, path_to_monthly_log}", context do
     assert Clijo.JournalManager.make_monthly_log() ==
-           {:ok, "#{context[:home_directory]}/#{context[:current_year]}/#{context[:current_month]}/monthly_log.md"}
+           {:ok, "#{context[:home_directory]}/" <>
+                 "#{context[:current_year]}/" <>
+                 "#{context[:current_month]}/" <>
+                 "monthly_log.md"}
+  end
+
+  test "get_tasks/1 returns the correct items", context do
+
   end
 end

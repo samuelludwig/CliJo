@@ -18,7 +18,7 @@ defmodule Clijo.JournalManager do
 
   Returns `{:ok, path_to_monthly_log}`
   """
-  @doc since: "June 10th, 2019"
+  @doc since: "July 18th, 2019"
   def make_monthly_log() do
     {:ok, path} = generate_directory()
     path = path <> "/monthly_log.md"
@@ -83,6 +83,92 @@ defmodule Clijo.JournalManager do
   end
 
   @doc """
+  Lists all unfinished tasks in the given `scope` into :stdio.
+
+  If the `scope` is `"day"`,
+  then all unfinished tasks for the current day are displayed.
+
+  If the `scope` is
+  `"week"` then the unfinished tasks for the last 7 numbered daily logs will be
+  shown. If there are less than 7 numbered daily logs in the current month's
+  directory, only those in that month will be displayed, it will not reach back
+  into the previous month.
+
+  If the `scope` is `"month"` then the unfinished tasks for *all* logs
+  under that month will be shown, including the tasks for the monthly log
+  itself.
+
+  Returns `:ok` if successful.
+  """
+  @doc since: "July 21st, 2019"
+  @spec display_tasks(String.t) :: atom()
+  def display_tasks(scope \\ "day") do
+    {:ok, task_list} = get_tasks(scope)
+    IO.puts(task_list)
+  end
+
+  @doc """
+  Returns a list of all unfinished tasks in `scope`.
+
+  If the `scope` is `"day"`,
+  then all unfinished tasks for the current day are displayed.
+
+  If the `scope` is
+  `"week"` then the unfinished tasks for the last 7 numbered daily logs will be
+  shown. If there are less than 7 numbered daily logs in the current month's
+  directory, only those in that month will be displayed, it will not reach back
+  into the previous month.
+
+  If the `scope` is `"month"` then the unfinished tasks for *all* logs
+  under that month will be shown, including the tasks for the monthly log
+  itself.
+
+  Returns `{:ok, list_of_unfinished_tasks}` if successful.
+  """
+  @doc since: "July 21st, 2019"
+  @spec display_tasks(String.t) :: list()
+  def get_tasks(scope \\ "day") do
+    month_directory =
+      "#{ConfigManager.get_home_directory()}/"
+      <> "#{Date.utc_today().year}/"
+      <> "#{Date.utc_today().month}"
+
+    current_day = Date.utc_today().day
+
+    log_files = File.ls!(month_directory)
+
+    files_to_eval =
+      case scope do
+        "day" ->
+          [to_string(current_day) <> ".md"]
+
+        "week" ->
+          log_files
+          |> Enum.filter(fn x ->
+            Integer.parse(x) != :error
+            && Integer.parse(x) |> elem(0) < current_day
+          end)
+          |> Enum.take(-7)
+
+        "month" ->
+          log_files
+
+        _ -> {:error, "invalid argument"}
+      end
+    # TODO Look into adding timestamps to all files
+    # (created/last updated/last visited), this could allow more intuitive
+    # reasoning about with regards to what files are "relevant" for any given
+    # command.
+
+    for file <- files_to_eval do
+      {:ok, contents} = get_log(String.trim(file, ".md"))
+
+      contents
+      |> parse_items("task_prefix")
+    end
+  end
+
+  @doc """
   Displays `log_from` and waits for the user to enter the line number of the
   task they want to migrate, after the line number entered
   migrate_task_explicit/3 is called with the derived fields.
@@ -143,7 +229,8 @@ defmodule Clijo.JournalManager do
   """
   @doc since: "June 13th, 2019"
   def parse_items(string, item) do
-    prefix = "\n#{Clijo.ConfigManager.get_prefix(item)}"
+    # TODO Make this work correctly.
+    {:ok, prefix} = Clijo.ConfigManager.get_prefix(item)
     {:ok, String.split(string, prefix)}
   end
 
@@ -196,8 +283,7 @@ defmodule Clijo.JournalManager do
   """
   @doc since: "June 11th, 2019"
   def display_daily_log(log_name \\ nil) do
-    {:ok, path} = make_daily_log(log_name)
-    {:ok, contents} = File.read(path)
+    {:ok, contents} = get_log(log_name)
 
     append_line_numbers_to(contents)
     |> Enum.each(&IO.puts(&1))
@@ -213,8 +299,8 @@ defmodule Clijo.JournalManager do
   """
   @doc since: "June 10th, 2019"
   def edit_daily_log(log_name \\ nil, line_num, edit) do
+    {:ok, contents} = get_log(log_name)
     {:ok, path} = make_daily_log(log_name)
-    {:ok, contents} = File.read(path)
 
     contents
     |> String.split("\n")
@@ -225,6 +311,19 @@ defmodule Clijo.JournalManager do
     |> Enum.into(File.stream!(path))
 
     {:ok, path}
+  end
+
+  @doc """
+  Returns the contents of daily log `log_name` as a string. If `log_name` is
+  nil, it will default to the current day's daily log.
+
+  Returns `{:ok, contents_of_daily_log}` if successful.
+  """
+  @doc since: "July 21st, 2019"
+  @spec get_log(String.t | nil) :: {:ok, String.t} | {:error, String.t}
+  def get_log(log_name \\ nil) do
+    {:ok, path} = make_daily_log(log_name)
+    File.read(path)
   end
 
   # Grabs input from the terminal one line at a time and terminates
