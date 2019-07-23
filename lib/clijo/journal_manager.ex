@@ -231,7 +231,15 @@ defmodule Clijo.JournalManager do
   def parse_items(string, item) do
     # TODO Make this work correctly.
     {:ok, prefix} = Clijo.ConfigManager.get_prefix(item)
-    {:ok, String.split(string, prefix)}
+
+    list_of_strings =
+      string
+      |> String.split("\n")
+      |> Enum.map(&String.trim(&1))
+      |> Enum.filter(&String.starts_with?(&1, "- [ ] "))
+      |> Enum.map(fn x -> x <> "\n" end)
+
+    {:ok, list_of_strings}
   end
 
   @doc """

@@ -24,6 +24,28 @@ defmodule Clijo.JournalManagerTest do
   end
 
   test "get_tasks/1 returns the correct items", context do
+    assert true
+  end
 
+  test "parse_items/2 returns a list of strings with the correct prefixes", context do
+    string = """
+    # My Header
+
+    - - A note
+    - [ ] A task.
+      - [ ] Another, nested task.
+    - * some other thing
+    - [ ] A final task.
+
+    """
+
+    item = "task_prefix"
+
+    {:ok, list_of_strings} = Clijo.JournalManager.parse_items(string, item)
+
+    assert list_of_strings ==
+      ["- [ ] A task.\n",
+       "- [ ] Another, nested task.\n",
+       "- [ ] A final task.\n"]
   end
 end
