@@ -63,7 +63,8 @@ defmodule Clijo.JournalManager do
   Returns `:ok` if successful.
   """
   @doc since: "June 11th, 2019"
-  def display_monthly_log(month \\ Date.utc_today().month, year \\ Date.utc_today().year) do
+  def display_monthly_log(month \\ Date.utc_today().month,
+                          year \\ Date.utc_today().year) do
     path = "#{ConfigManager.get_home_directory()}/#{year}/#{month}/monthly_log.md"
     {:ok, contents} = File.read(path)
     IO.puts(contents)
@@ -160,12 +161,17 @@ defmodule Clijo.JournalManager do
     # reasoning about with regards to what files are "relevant" for any given
     # command.
 
-    for file <- files_to_eval do
-      {:ok, contents} = get_log(String.trim(file, ".md"))
+    # Puts the tasks from each file into a list, and then appends that list
+    # to a super-list with all the other files' tasks.
+    aggregated_tasks =
+      for file <- files_to_eval do
+        {:ok, contents} = get_log(String.trim(file, ".md"))
 
-      contents
-      |> parse_items("task_prefix")
-    end
+        contents
+        |> parse_items("task_prefix")
+        |> elem(1)
+      end
+    List.flatten(aggregated_tasks)
   end
 
   @doc """
@@ -236,7 +242,7 @@ defmodule Clijo.JournalManager do
       string
       |> String.split("\n")
       |> Enum.map(&String.trim(&1))
-      |> Enum.filter(&String.starts_with?(&1, "- [ ] "))
+      |> Enum.filter(&String.starts_with?(&1, prefix))
       |> Enum.map(fn x -> x <> "\n" end)
 
     {:ok, list_of_strings}
