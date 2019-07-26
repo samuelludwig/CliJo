@@ -18,7 +18,7 @@ defmodule Clijo.ConfigManager do
   Returns `{:ok, path}` if successful, returns `{:error, reason}` if unsuccessful.
   """
   @doc since: "June 6th, 2019"
-  def set_home_directory(path) do
+  def define_home_directory(path) do
     if File.exists?(path) do
       {:ok, user_config} = get_user_config()
       path = Path.expand(path)
@@ -40,9 +40,9 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 7th, 2019"
   def get_home_directory() do
-    {:ok, config} = get_user_config()
+    {:ok, user_config} = get_user_config()
 
-    config
+    user_config
     |> Map.get("home_directory")
   end
 
@@ -53,7 +53,7 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def define_prefixes(item_prefix_map \\ %{}) do
-	{:ok, user_config} = get_user_config()
+	  {:ok, user_config} = get_user_config()
     {:ok, original_prefixes} = get_prefixes()
 
     new_prefixes = Map.merge(original_prefixes, item_prefix_map)
@@ -116,6 +116,36 @@ defmodule Clijo.ConfigManager do
 
   	prefixes
     |> Map.fetch(item)
+  end
+
+  @doc """
+  Sets the value of `future_log_span` in `user_config.json` to `span`.
+
+  Returns `{:ok, new_value_of_future_log_span}` if successful.
+  """
+  @doc since: "July 26th, 2019"
+  def define_future_log_span(span) do
+    {:ok, user_config} = get_user_config()
+
+    write_to_file = &File.write!(@user_config_path, &1)
+    %{user_config | "future_log_span" => span}
+    |> Jason.encode!()
+    |> write_to_file.()
+
+    {:ok, span}
+  end
+
+  @doc """
+  Gets the value of `future_log_span` from `user_config.json`.
+
+  Returns `{:ok, number_of_months_in_future_log}` if successful.
+  """
+  @doc since: "July 26th, 2019"
+  def get_future_log_span() do
+    {:ok, user_config} = get_user_config()
+
+    user_config
+    |> Map.fetch("future_log_span")
   end
 
   @doc """

@@ -340,6 +340,89 @@ defmodule Clijo.JournalManager do
     File.read(path)
   end
 
+  @doc """
+  Creates a future log at location `home_directory/future_log.md` if one does
+  not already exist.
+
+  Returns `{:ok, path_to_future_log}` if successful.
+  """
+  @doc since: "July 26th, 2019"
+  def make_future_log() do
+    {:ok, path} = ConfigManager.get_home_directory()
+    path = path <> "future_log.md"
+  end
+
+  def update_future_log() do
+    
+  end
+
+  def display_future_log() do
+    
+  end
+
+  @doc """
+  Returns the months covered by the current future_log
+  """
+  def get_months_of_future_log() do
+    
+  end
+
+  def insert_item_into_future_log() do
+    
+  end
+
+  @doc """
+  Takes in a string that represents the layout of a future log and converts it
+  into a map.
+
+  Returns `{:ok, future_log_map}` if successful.
+  """
+  @doc since: "July 26th, 2019"
+  def future_log_string_to_map(string) do
+    # The string will be in the format
+    # "***\n`month1`\n\n`item1`\n`item2`\n\n***\n`month2`\n\n`item3` ...\n***"
+
+    future_log_map =
+      string
+      |> String.split("***", trim: true)
+      |> Enum.map(&String.split(&1, "\n", trim: true))
+      |> Enum.map(fn [x|y] -> %{x => y} end)
+      |> Enum.reduce(fn x, acc ->
+           Map.merge(x, acc, fn _key, map1, map2 ->
+             for {k, v1} <- map1, into: %{}, do: {k, v1 + map2[k]}
+           end)
+         end)
+
+    {:ok, future_log_map}
+  end
+
+  @doc """
+  Takes in a map that represents the layout of a future log and converts it into
+  a writeable string.
+
+  Returns `{:ok, future_log_string}` if successful.
+  """
+  @doc since: "July 26th, 2019"
+  def future_log_map_to_string(map) do
+    # The map will be in the format %{"month1" => ["item1", "item2"],
+    #                                 "month2" => ["item3", "item4"],
+    #                                 ...,
+    #                                 "monthN" => ["itemI", "itemJ"]}
+    log_string =
+      for month <- map do
+        """
+        ***
+        #{elem(month, 0)}
+
+        #{for item <- elem(month, 1), do: item <> "\n"}
+        """
+      end
+      |> to_string()
+      |> Kernel.<> "***"
+
+    {:ok, log_string}
+  end
+
   # Grabs input from the terminal one line at a time and terminates
   # after the phrase `:done` is read in.
   defp get_input(file_path) do

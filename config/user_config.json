@@ -1,1 +1,1 @@
-{"automation_on":true,"home_directory":"c:/users/samue/my_clijo","prefixes":{"event_prefix":"- @ ","note_prefix":"- * ","task_prefix":"- [ ] ","completed_task_prefix":"- [x] ","migrated_task_prefix":"- [>] ","scheduled_task_prefix":"- [<] "}}
+{"automation_on":true,"future_log_span":3,"home_directory":"c:/users/samue/my_clijo","prefixes":{"completed_task_prefix":"- [x] ","event_prefix":"- @ ","migrated_task_prefix":"- [>] ","note_prefix":"- * ","scheduled_task_prefix":"- [<] ","task_prefix":"- [ ] "}}
