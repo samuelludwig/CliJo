@@ -55,8 +55,10 @@ A Bullet-Journal application for the CLI.
 
 ## If I Were to Rewrite This
 
-- I would separate each peice of the journal into it's own module, giving
+- I would separate each piece of the journal into it's own module, giving
   each type of log its own struct.
 - I started with input and output right away, this led to functions that 
   weren't as pure as they should be. In a rewrite I would employ a more 
   methodical, test-centric/test-friendly approach.
+- I would try to stick more strictly to hygenic Git use, e.g. use branches
+  more often, more detailed commit messages, smaller commits, etc.
