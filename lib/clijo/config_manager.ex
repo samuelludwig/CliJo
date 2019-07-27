@@ -53,7 +53,7 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def define_prefixes(item_prefix_map \\ %{}) do
-	  {:ok, user_config} = get_user_config()
+    {:ok, user_config} = get_user_config()
     {:ok, original_prefixes} = get_prefixes()
 
     new_prefixes = Map.merge(original_prefixes, item_prefix_map)
@@ -61,9 +61,9 @@ defmodule Clijo.ConfigManager do
     # Update settings map and write to file
     %{user_config | "prefixes" => new_prefixes}
     |> Jason.encode!()
-	  |> write_to_file.()
+    |> write_to_file.()
 
-	  {:ok, new_prefixes}
+    {:ok, new_prefixes}
   end
 
   @doc """
@@ -75,21 +75,21 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def delete_prefix(item) do
-	  {:ok, user_config} = get_user_config()
-	  {:ok, original_prefixes} = get_prefixes()
+    {:ok, user_config} = get_user_config()
+    {:ok, original_prefixes} = get_prefixes()
 
-	  if Map.has_key?(original_prefixes, item) do
-		  new_prefixes = Map.delete(original_prefixes, item)
-		  write_to_file = &File.write!(@user_config_path, &1)
-		  # Update settings map and write to file
-   		%{user_config | "prefixes" => new_prefixes}
-	    |> Jason.encode!()
-  		|> write_to_file.()
+    if Map.has_key?(original_prefixes, item) do
+      new_prefixes = Map.delete(original_prefixes, item)
+      write_to_file = &File.write!(@user_config_path, &1)
+      # Update settings map and write to file
+      %{user_config | "prefixes" => new_prefixes}
+      |> Jason.encode!()
+      |> write_to_file.()
 
-	   	{:ok, new_prefixes}
-	  else
-		  {:error, "prefix: #{item} does not exist."}
-	  end
+      {:ok, new_prefixes}
+    else
+      {:error, "prefix: #{item} does not exist."}
+    end
   end
 
   @doc """
@@ -99,10 +99,10 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def get_prefixes() do
-	  {:ok, user_config} = get_user_config()
+    {:ok, user_config} = get_user_config()
 
-	  user_config
-	  |> Map.fetch("prefixes")
+    user_config
+    |> Map.fetch("prefixes")
   end
 
   @doc """
@@ -112,9 +112,9 @@ defmodule Clijo.ConfigManager do
   """
   @doc since: "June 16th, 2019"
   def get_prefix(item) do
-  	{:ok, prefixes} = get_prefixes()
+    {:ok, prefixes} = get_prefixes()
 
-  	prefixes
+    prefixes
     |> Map.fetch(item)
   end
 
@@ -128,6 +128,7 @@ defmodule Clijo.ConfigManager do
     {:ok, user_config} = get_user_config()
 
     write_to_file = &File.write!(@user_config_path, &1)
+
     %{user_config | "future_log_span" => span}
     |> Jason.encode!()
     |> write_to_file.()
@@ -156,8 +157,8 @@ defmodule Clijo.ConfigManager do
   @doc since: "June 16th, 2019"
   def get_user_config() do
     {:ok,
-    @user_config_path
-    |> File.read!()
-    |> Jason.decode!()}
+     @user_config_path
+     |> File.read!()
+     |> Jason.decode!()}
   end
 end

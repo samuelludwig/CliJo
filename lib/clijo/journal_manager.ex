@@ -63,8 +63,10 @@ defmodule Clijo.JournalManager do
   Returns `:ok` if successful.
   """
   @doc since: "June 11th, 2019"
-  def display_monthly_log(month \\ Date.utc_today().month,
-                          year \\ Date.utc_today().year) do
+  def display_monthly_log(
+        month \\ Date.utc_today().month,
+        year \\ Date.utc_today().year
+      ) do
     path = "#{ConfigManager.get_home_directory()}/#{year}/#{month}/monthly_log.md"
     {:ok, contents} = File.read(path)
     IO.puts(contents)
@@ -102,7 +104,7 @@ defmodule Clijo.JournalManager do
   Returns `:ok` if successful.
   """
   @doc since: "July 21st, 2019"
-  @spec display_tasks(String.t) :: atom()
+  @spec display_tasks(String.t()) :: atom()
   def display_tasks(scope \\ "day") do
     {:ok, task_list} = get_tasks(scope)
     IO.puts(task_list)
@@ -127,12 +129,12 @@ defmodule Clijo.JournalManager do
   Returns `{:ok, list_of_unfinished_tasks}` if successful.
   """
   @doc since: "July 21st, 2019"
-  @spec display_tasks(String.t) :: list()
+  @spec display_tasks(String.t()) :: list()
   def get_tasks(scope \\ "day") do
     month_directory =
-      "#{ConfigManager.get_home_directory()}/"
-      <> "#{Date.utc_today().year}/"
-      <> "#{Date.utc_today().month}"
+      "#{ConfigManager.get_home_directory()}/" <>
+        "#{Date.utc_today().year}/" <>
+        "#{Date.utc_today().month}"
 
     current_day = Date.utc_today().day
 
@@ -146,16 +148,18 @@ defmodule Clijo.JournalManager do
         "week" ->
           log_files
           |> Enum.filter(fn x ->
-            Integer.parse(x) != :error
-            && Integer.parse(x) |> elem(0) < current_day
+            Integer.parse(x) != :error &&
+              Integer.parse(x) |> elem(0) < current_day
           end)
           |> Enum.take(-7)
 
         "month" ->
           log_files
 
-        _ -> {:error, "invalid argument"}
+        _ ->
+          {:error, "invalid argument"}
       end
+
     # TODO Look into adding timestamps to all files
     # (created/last updated/last visited), this could allow more intuitive
     # reasoning about with regards to what files are "relevant" for any given
@@ -171,6 +175,7 @@ defmodule Clijo.JournalManager do
         |> parse_items("task_prefix")
         |> elem(1)
       end
+
     List.flatten(aggregated_tasks)
   end
 
@@ -183,9 +188,11 @@ defmodule Clijo.JournalManager do
   def migrate_task(log_from, log_to \\ elem(make_monthly_log(), 1)) do
     {:ok, path} = get_log_path(log_from)
     display_daily_log(log_from)
+
     {line_num, _} =
       IO.gets("\nEnter line number of task you want to migrate: ")
       |> Integer.parse()
+
     migrate_task_explicit(path, line_num, log_to)
   end
 
@@ -203,24 +210,24 @@ defmodule Clijo.JournalManager do
     if File.exists?(log_from) do
       task =
         File.stream!(log_from)
-        |> Enum.at(line_num-1)
+        |> Enum.at(line_num - 1)
         |> String.trim_leading()
 
       if is_task?(task) do
         File.write!(log_to, task, [:append])
 
         migrated_task = change_prefix(task, "task_prefix", "migrated_task_prefix")
+
         updated_log_from =
           File.stream!(log_from)
           |> Enum.to_list()
-          |> List.replace_at(line_num-1, migrated_task)
+          |> List.replace_at(line_num - 1, migrated_task)
 
         File.write!(log_from, updated_log_from, [:write])
       else
         {:error, "#{task} is not a task, tasks have a prefix that looks like
         #{Clijo.ConfigManager.get_prefix("task_prefix")}."}
       end
-
     else
       {:error, "File #{log_from} does not exist."}
     end
@@ -334,7 +341,7 @@ defmodule Clijo.JournalManager do
   Returns `{:ok, contents_of_daily_log}` if successful.
   """
   @doc since: "July 21st, 2019"
-  @spec get_log(String.t | nil) :: {:ok, String.t} | {:error, String.t}
+  @spec get_log(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
   def get_log(log_name \\ nil) do
     {:ok, path} = make_daily_log(log_name)
     File.read(path)
@@ -350,25 +357,84 @@ defmodule Clijo.JournalManager do
   def make_future_log() do
     {:ok, path} = ConfigManager.get_home_directory()
     path = path <> "future_log.md"
-  end
 
-  def update_future_log() do
-    
-  end
+    header = """
+    # FUTURE LOG
 
-  def display_future_log() do
-    
+    """
+
+    unless File.exists?(path) do
+      File.write!(path, header)
+    end
+
+    {:ok, path}
   end
 
   @doc """
-  Returns the months covered by the current future_log
+  Creates a map for a future log.
+
+  The map will be in the form:
+  %{"month1" => []
+    "month2" => []
+    "..."
+    "monthN" => []}
+
+  Returns `{:ok, log_map}` if successful.
   """
-  def get_months_of_future_log() do
-    
+  @doc since: "July 27th, 2019"
+  def make_future_log_map() do
+    {:ok, months} = get_months_of_future_log()
+    months = Enum.map(months, &to_string(&1))
+
+    log_map =
+      for m <- months, reduce: %{} do
+        acc -> Map.put_new(acc, m, [])
+      end
+
+    {:ok, log_map}
   end
 
-  def insert_item_into_future_log() do
-    
+  def update_future_log_map() do
+  end
+
+  def display_future_log() do
+  end
+
+  @doc """
+  Returns the months covered by the current future_log in a list, using the
+  value in `user_config.json`.
+
+  Returns `{:ok, [month, in, future, log,...]}`
+  """
+  @doc since: "July 27th, 2019"
+  def get_months_of_future_log() do
+    {:ok, log_span} = ConfigManager.get_future_log_span()
+    current_month = Date.utc_today().month
+
+    month_list =
+      for month <- Enum.into(1..log_span, []) do
+        if month + current_month > 12 do
+          month + current_month - 11
+        else
+          month + current_month
+        end
+      end
+
+    {:ok, month_list}
+  end
+
+  @doc """
+  Inserts `item` into the list of values belonging to key `month` in `map`.
+
+  Returns `updated_future_log_map`
+  """
+  @doc since: "July 27th, 2019"
+  def insert_item_into_future_log_map!(map, month, item) do
+    if Map.get(map, month) != [] do
+      Map.update!(map, month, fn x -> x ++ [item] end)
+    else
+      Map.update!(map, month, fn x -> [item] end)
+    end
   end
 
   @doc """
@@ -380,18 +446,19 @@ defmodule Clijo.JournalManager do
   @doc since: "July 26th, 2019"
   def future_log_string_to_map(string) do
     # The string will be in the format
-    # "***\n`month1`\n\n`item1`\n`item2`\n\n***\n`month2`\n\n`item3` ...\n***"
+    # "FUTURE LOG\n\n***\n`month1`\n\n`item1`\n`item2`\n\n***\n`month2`\n\n***"
 
     future_log_map =
       string
       |> String.split("***", trim: true)
+      |> Enum.drop(1)
       |> Enum.map(&String.split(&1, "\n", trim: true))
-      |> Enum.map(fn [x|y] -> %{x => y} end)
+      |> Enum.map(fn [x | y] -> %{x => y} end)
       |> Enum.reduce(fn x, acc ->
-           Map.merge(x, acc, fn _key, map1, map2 ->
-             for {k, v1} <- map1, into: %{}, do: {k, v1 + map2[k]}
-           end)
-         end)
+        Map.merge(x, acc, fn _key, map1, map2 ->
+          for {k, v1} <- map1, into: %{}, do: {k, v1 + map2[k]}
+        end)
+      end)
 
     {:ok, future_log_map}
   end
@@ -418,9 +485,13 @@ defmodule Clijo.JournalManager do
         """
       end
       |> to_string()
-      |> Kernel.<> "***"
+      |> Kernel.<>("***")
 
     {:ok, log_string}
+  end
+
+  def display_journal_index do
+    
   end
 
   # Grabs input from the terminal one line at a time and terminates
@@ -510,17 +581,17 @@ defmodule Clijo.JournalManager do
   # `log_name` provided.
   defp generate_daily_log_header(log_name \\ nil) do
     header_title =
-    if is_nil(log_name) do
-      Date.utc_today()
-      |> Date.to_string()
-    else
-      log_name
-    end
+      if is_nil(log_name) do
+        Date.utc_today()
+        |> Date.to_string()
+      else
+        log_name
+      end
 
-  """
-  # #{header_title}
+    """
+    # #{header_title}
 
-  """
+    """
   end
 
   # Appends line numbers to a given string, it will correctly align all content
@@ -533,12 +604,12 @@ defmodule Clijo.JournalManager do
     # All this is done to make sure the text is properly alinged.
     |> Enum.map(fn {line, line_num} ->
       "#{line_num}#{
-      cond do
-      line_num >= 1000 -> " "
-      line_num >= 100 -> "  "
-      line_num >= 10 -> "   "
-      true -> "    "
-      end
+        cond do
+          line_num >= 1000 -> " "
+          line_num >= 100 -> "  "
+          line_num >= 10 -> "   "
+          true -> "    "
+        end
       }#{line}"
     end)
   end

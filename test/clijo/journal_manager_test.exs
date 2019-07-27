@@ -9,18 +9,21 @@ defmodule Clijo.JournalManagerTest do
 
     home_directory = Clijo.ConfigManager.get_home_directory()
 
-    %{current_day: current_day,
-     current_month: current_month,
-     current_year: current_year,
-     home_directory: home_directory}
+    %{
+      current_day: current_day,
+      current_month: current_month,
+      current_year: current_year,
+      home_directory: home_directory
+    }
   end
 
   test "make_monthly_log/0 returns {:ok, path_to_monthly_log}", context do
     assert Clijo.JournalManager.make_monthly_log() ==
-           {:ok, "#{context[:home_directory]}/" <>
-                 "#{context[:current_year]}/" <>
-                 "#{context[:current_month]}/" <>
-                 "monthly_log.md"}
+             {:ok,
+              "#{context[:home_directory]}/" <>
+                "#{context[:current_year]}/" <>
+                "#{context[:current_month]}/" <>
+                "monthly_log.md"}
   end
 
   test "get_tasks/1 returns the correct items", context do
@@ -44,8 +47,6 @@ defmodule Clijo.JournalManagerTest do
     {:ok, list_of_strings} = Clijo.JournalManager.parse_items(string, item)
 
     assert list_of_strings ==
-      ["- [ ] A task.\n",
-       "- [ ] Another, nested task.\n",
-       "- [ ] A final task.\n"]
+             ["- [ ] A task.\n", "- [ ] Another, nested task.\n", "- [ ] A final task.\n"]
   end
 end

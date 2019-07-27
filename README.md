@@ -52,3 +52,11 @@ A Bullet-Journal application for the CLI.
 - My current way of referencing user settings is suboptimal, every time they are referenced, I am reopening the `user_config.json` file and decoding the JSON into a map, which I then finally search through to get the setting I want.
   - As far as remedies go, having the map of settings decoded when the application first runs and have it held as a module attribute in `Clijo.ConfigManager` is not one of them, as module attributes are determined at compile-time.
   - Alternatives?
+
+## If I Were to Rewrite This
+
+- I would separate each peice of the journal into it's own module, giving
+  each type of log its own struct.
+- I started with input and output right away, this led to functions that 
+  weren't as pure as they should be. In a rewrite I would employ a more 
+  methodical, test-centric/test-friendly approach.
