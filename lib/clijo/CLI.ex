@@ -9,12 +9,13 @@ defmodule Clijo.CLI do
 
   @commands %{
     "quit" => "Quits CliJo.",
-    "def_home" => "format: \"def_home C:/path/to/home/directory\"." <>
-      "Defines the location to put all files from CliJo.",
-    "new_daily" => "format: \"new_daily log_name(optional)\"." <>
-      "Creates a new daily log under `log_name` if one does not already exist.",
+    "def_home" =>
+      "format: \"def_home C:/path/to/home/directory\"." <>
+        "Defines the location to put all files from CliJo.",
+    "new_daily" =>
+      "format: \"new_daily log_name(optional)\"." <>
+        "Creates a new daily log under `log_name` if one does not already exist.",
     "new_entry" => "format: "
-
   }
 
   defp receive_command() do
@@ -39,9 +40,12 @@ defmodule Clijo.CLI do
   defp execute_command(["new_daily" | log_name]) do
     case {status, path} = JournalManager.make_daily_log(log_name) do
       {:ok, path} ->
-        message = "\nCommand returned with status '#{status}' - " <>
-          "Daily Log was created at location #{path}."
+        message =
+          "\nCommand returned with status '#{status}' - " <>
+            "Daily Log was created at location #{path}."
+
         IO.puts(message)
+
       _ ->
         message = "\nAn error has occured."
         IO.puts(message)
@@ -60,8 +64,10 @@ defmodule Clijo.CLI do
 
   defp print_help_message() do
     IO.puts("\nThe following commands are supported:\n")
+
     @commands
-    |> Enum.map(fn({command, description}) ->
-      IO.puts("    #{command} - #{description}") end)
+    |> Enum.map(fn {command, description} ->
+      IO.puts("    #{command} - #{description}")
+    end)
   end
 end

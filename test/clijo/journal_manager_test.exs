@@ -51,7 +51,7 @@ defmodule Clijo.JournalManagerTest do
     {:ok, string} = Clijo.JournalManager.future_log_map_to_string(map)
 
     assert string ==
-      "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
+             "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
   end
 
   test "future_log_map_to_string/1 works correctly when map is not provided in order" do
@@ -59,7 +59,7 @@ defmodule Clijo.JournalManagerTest do
     {:ok, string} = Clijo.JournalManager.future_log_map_to_string(map)
 
     assert string ==
-      "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
+             "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
   end
 
   test "future_log_string_to_map/1 works correctly", context do
@@ -67,6 +67,6 @@ defmodule Clijo.JournalManagerTest do
     {:ok, map} = Clijo.JournalManager.future_log_string_to_map(string)
 
     assert map ==
-      %{"8" => ["item1", "item2"], "9" => ["item3", "item4"]}
+             %{"8" => ["item1", "item2"], "9" => ["item3", "item4"]}
   end
 end
