@@ -27,10 +27,10 @@ A Bullet-Journal application for the CLI.
 
 - [x] Define Home Directory \[full_or_relative_path\]
   - Defines a location to put all files from CliJo
-  - Changing home directory should move all files automatically
+  - Changing home directory should move all files automatically ~~X~~
 - [x] New Daily Log \[log_name (optional)\]
   - Creates a new daily log titled `log_name`
-  - Defaults to month.day \<space\> day_of_week (ex: 5.25 SAT)
+  - Defaults to month.day \<space\> day_of_week (ex: 5.25 SAT) ~~X~~
 - [x] New Entry \[log_name (optional)\]
   - Appends an entry (one or more lines of text) to the file for `log_name`
   - If `log_name` is not provided, it will default to the current daily log, if a daily log does not yet exist, it will be created
@@ -39,8 +39,8 @@ A Bullet-Journal application for the CLI.
   - If no `line_num` given in command: Displays full log with numbered lines, and awaits input of `line_num` to edit
   - Once line_num is given, the user will write out the text they want to replace it with
 - [x] Migrate Task \[log_from, line_num (optional), log_to (optional)\]
-- [ ] View Index
-- [ ] View Future Log
+- [ ] View Index ~~X~~
+- [ ] View Future Log ~~X~~
 - [x] View Monthly Log
 - [x] View Daily Log \[log_name\]
 - [x] View Tasks \[day | week | month\]
@@ -64,6 +64,7 @@ A Bullet-Journal application for the CLI.
   more often, more detailed commit messages, smaller commits, etc.
 - I would possibly model the project so that all contents of the journal would
   be persisted in a global struct, I don't think it would necessarily be an
-  anti-pattern in my case. The only issue is it would effectively double my
-  memory useage, though on the grand scale it shouldn't matter too much, text
-  is /reasonably/ low-footprint.
+  anti-pattern in my case (but then again, everyone always thinks they're the 
+  special case). The only issue is it would effectively double my memory useage, 
+  though on the grand scale it shouldn't matter too much, text is /reasonably/ 
+  low-footprint.
