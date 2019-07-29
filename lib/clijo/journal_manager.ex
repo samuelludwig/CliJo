@@ -499,10 +499,6 @@ defmodule Clijo.JournalManager do
     {:ok, log_string}
   end
 
-  def display_journal_index do
-    
-  end
-
   # Grabs input from the terminal one line at a time and terminates
   # after the phrase `:done` is read in.
   defp get_input(file_path) do

@@ -26,10 +26,6 @@ defmodule Clijo.JournalManagerTest do
                 "monthly_log.md"}
   end
 
-  test "get_tasks/1 returns the correct items", context do
-    assert true
-  end
-
   test "parse_items/2 returns a list of strings with the correct prefixes", context do
     string = """
     # My Header
@@ -72,9 +68,5 @@ defmodule Clijo.JournalManagerTest do
 
     assert map ==
       %{"8" => ["item1", "item2"], "9" => ["item3", "item4"]}
-  end
-
-  test "update_future_log_map/1 works correctly" do
-    
   end
 end

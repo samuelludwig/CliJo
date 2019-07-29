@@ -62,3 +62,8 @@ A Bullet-Journal application for the CLI.
   methodical, test-centric/test-friendly approach.
 - I would try to stick more strictly to hygenic Git use, e.g. use branches
   more often, more detailed commit messages, smaller commits, etc.
+- I would possibly model the project so that all contents of the journal would
+  be persisted in a global struct, I don't think it would necessarily be an
+  anti-pattern in my case. The only issue is it would effectively double my
+  memory useage, though on the grand scale it shouldn't matter too much, text
+  is /reasonably/ low-footprint.
