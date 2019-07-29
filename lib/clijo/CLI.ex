@@ -8,10 +8,13 @@ defmodule Clijo.CLI do
   end
 
   @commands %{
-    "quit" => "Quits CliJo",
+    "quit" => "Quits CliJo.",
     "def_home" => "format: \"def_home C:/path/to/home/directory\"." <>
       "Defines the location to put all files from CliJo.",
-    "new_daily" => "format"
+    "new_daily" => "format: \"new_daily log_name(optional)\"." <>
+      "Creates a new daily log under `log_name` if one does not already exist.",
+    "new_entry" => "format: "
+
   }
 
   defp receive_command() do
@@ -30,6 +33,7 @@ defmodule Clijo.CLI do
     {status, _} = ConfigManager.define_home_directory(path)
     message = "\nCommand returned with status '#{status}'."
     IO.puts(message)
+    receive_command()
   end
 
   defp execute_command(["new_daily" | log_name]) do
@@ -43,11 +47,15 @@ defmodule Clijo.CLI do
         IO.puts(message)
         print_help_message()
     end
+
+    receive_command()
   end
 
   defp execute_command(_unknown) do
     IO.puts("\nInvalid command, please pick from the list of valid commands-\n")
     print_help_message()
+
+    receive_command()
   end
 
   defp print_help_message() do
