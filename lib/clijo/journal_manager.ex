@@ -394,10 +394,13 @@ defmodule Clijo.JournalManager do
     {:ok, log_map}
   end
 
-  def update_future_log_map() do
+  def update_future_log() do
+    {:ok, path} = ConfigManager.get_home_directory() <> "future_log.md"
+    log_string = File.read!(path)
   end
 
   def display_future_log() do
+    update_future_log()
   end
 
   @doc """
@@ -475,6 +478,10 @@ defmodule Clijo.JournalManager do
     #                                 "month2" => ["item3", "item4"],
     #                                 ...,
     #                                 "monthN" => ["itemI", "itemJ"]}
+
+    # TODO As of now this function is liable to get the months out of order, due
+    # to the nature of maps in Elixir. A rewrite of this function may be
+    # necessary in the future.
     log_string =
       for month <- map do
         """
@@ -486,6 +493,8 @@ defmodule Clijo.JournalManager do
       end
       |> to_string()
       |> Kernel.<>("***")
+
+    log_string = "# FUTURE LOG\n\n" <> log_string
 
     {:ok, log_string}
   end

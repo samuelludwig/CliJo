@@ -49,4 +49,32 @@ defmodule Clijo.JournalManagerTest do
     assert list_of_strings ==
              ["- [ ] A task.\n", "- [ ] Another, nested task.\n", "- [ ] A final task.\n"]
   end
+
+  test "future_log_map_to_string/1 works correctly" do
+    map = %{"8" => ["item1", "item2"], "9" => ["item3", "item4"]}
+    {:ok, string} = Clijo.JournalManager.future_log_map_to_string(map)
+
+    assert string ==
+      "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
+  end
+
+  test "future_log_map_to_string/1 works correctly when map is not provided in order" do
+    map = %{"9" => ["item3", "item4"], "8" => ["item1", "item2"]}
+    {:ok, string} = Clijo.JournalManager.future_log_map_to_string(map)
+
+    assert string ==
+      "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
+  end
+
+  test "future_log_string_to_map/1 works correctly", context do
+    string = "# FUTURE LOG\n\n***\n8\n\nitem1\nitem2\n\n***\n9\n\nitem3\nitem4\n\n***"
+    {:ok, map} = Clijo.JournalManager.future_log_string_to_map(string)
+
+    assert map ==
+      %{"8" => ["item1", "item2"], "9" => ["item3", "item4"]}
+  end
+
+  test "update_future_log_map/1 works correctly" do
+    
+  end
 end
