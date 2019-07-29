@@ -14,8 +14,18 @@ defmodule Clijo.CLI do
         "Defines the location to put all files from CliJo.",
     "new_daily" =>
       "format: \"new_daily log_name(optional)\"." <>
-        "Creates a new daily log under `log_name` if one does not already exist.",
-    "new_entry" => "format: "
+      "Creates a new daily log under `log_name` if one does not already exist.",
+    "new_entry" => "format: \"new_entry log_name(optional)\"." <>
+      "Appends an entry (one or more lines of text) to the file for `log_name`.",
+    "edit_log" => "format: \"edit_log log_name line_num(optional)\"." <>
+      "If no `line_num` is given, will display the full log with numbered lines" <>
+      "and awaits the input of `line_num` to edit.",
+    "migrate_task" => "format:" <>
+      "\"migrate log_from line_num(optional) log_to(optional)\".",
+    "view_monthly" => "Displays the current months monthly log.",
+    "view_daily" => "format: \"view_daily log_name\"." <>
+      "Display daily log `log_name`.",
+    "view_tasks" => "format: \"view_tasks day|week|month\"."
   }
 
   defp receive_command() do
@@ -53,6 +63,36 @@ defmodule Clijo.CLI do
     end
 
     receive_command()
+  end
+
+  defp execute_command(["new_daily"]) do
+  end
+
+  defp execute_command(["new_entry" | log_name]) do
+  end
+
+  defp execute_command(["new_entry" | log_name, line_num]) do
+  end
+
+  defp execute_command(["edit_log" | log_name]) do
+  end
+
+  defp execute_command(["edit_log" | log_name, line_num]) do
+  end
+
+  defp execute_command(["migrate_task" | log_from]) do
+  end
+
+  defp execute_command(["view_monthly"]) do
+  end
+
+  defp execute_command(["view_daily"]) do
+  end
+
+  defp execute_command(["view_daily" | log_name]) do
+  end
+
+  defp execute_command(["view_tasks" | span]) do
   end
 
   defp execute_command(_unknown) do

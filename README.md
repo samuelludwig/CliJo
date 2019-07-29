@@ -42,7 +42,7 @@ A Bullet-Journal application for the CLI.
 - [ ] View Index ~~X~~
 - [ ] View Future Log ~~X~~
 - [x] View Monthly Log
-- [x] View Daily Log \[log_name\]
+- [x] View Daily Log \[log_name (optional)\]
 - [x] View Tasks \[day | week | month\]
 
 ***
