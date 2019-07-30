@@ -52,6 +52,8 @@ A Bullet-Journal application for the CLI.
 - My current way of referencing user settings is suboptimal, every time they are referenced, I am reopening the `user_config.json` file and decoding the JSON into a map, which I then finally search through to get the setting I want.
   - As far as remedies go, having the map of settings decoded when the application first runs and have it held as a module attribute in `Clijo.ConfigManager` is not one of them, as module attributes are determined at compile-time.
   - Alternatives?
+- Bugs remain to be squashed, I believe that they will be someday, but for now other
+  projects exist.
 
 ## If I Were to Rewrite This
 
