@@ -23,9 +23,10 @@ defmodule Clijo.CLI do
     "migrate_task" => "format:" <>
       "\"migrate log_from line_num(optional) log_to(optional)\".",
     "view_monthly" => "Displays the current months monthly log.",
-    "view_daily" => "format: \"view_daily log_name\"." <>
+    "view_daily" => "format: \"view_daily log_name(optional)\"." <>
       "Display daily log `log_name`.",
-    "view_tasks" => "format: \"view_tasks day|week|month\"."
+    "view_tasks" => "format: \"view_tasks day|week|month(optional)\"." <>
+      "Defaults to `day`."
   }
 
   defp receive_command() do
@@ -40,14 +41,32 @@ defmodule Clijo.CLI do
     exit(:normal)
   end
 
-  defp execute_command(["def_home" | path]) do
+  defp execute_command(["def_home", path]) do
     {status, _} = ConfigManager.define_home_directory(path)
     message = "\nCommand returned with status '#{status}'."
     IO.puts(message)
     receive_command()
   end
 
-  defp execute_command(["new_daily" | log_name]) do
+  defp execute_command(["new_daily"]) do
+    case {status, path} = JournalManager.make_daily_log() do
+      {:ok, path} ->
+        message =
+          "\nCommand returned with status '#{status}' - " <>
+          "Daily Log was created at location #{path}."
+
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
+  end
+
+  defp execute_command(["new_daily", log_name]) do
     case {status, path} = JournalManager.make_daily_log(log_name) do
       {:ok, path} ->
         message =
@@ -65,34 +84,204 @@ defmodule Clijo.CLI do
     receive_command()
   end
 
-  defp execute_command(["new_daily"]) do
+  defp execute_command(["new_entry", log_name]) do
+    case {status, path} = JournalManager.new_entry(log_name) do
+      {:ok, path} ->
+        message =
+          "\nEntry finished with status '#{status}' - " <>
+          "Daily Log at location #{path} has been updated."
+
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["new_entry" | log_name]) do
+  defp execute_command(["edit_log"]) do
+    log_name = nil
+    JournalManager.display_daily_log(log_name)
+    line_num =
+      IO.gets("\nEnter the line number you wish to edit: ")
+      |> String.to_integer()
+    edit = IO.gets("\nEnter your edit: ")
+
+    case {status, path} = JournalManager.edit_daily_log(log_name, line_num, edit) do
+      {:ok, path} ->
+        message =
+          "\nEdit finished with status '#{status}' - " <>
+          "Daily Log at location #{path} has been updated."
+
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["new_entry" | log_name, line_num]) do
+  defp execute_command(["edit_log", log_name]) do
+    JournalManager.display_daily_log(log_name)
+    line_num =
+      IO.gets("\nEnter the line number you wish to edit: ")
+      |> String.to_integer()
+    edit = IO.gets("\nEnter your edit: ")
+
+    case {status, path} = JournalManager.edit_daily_log(log_name, line_num, edit) do
+      {:ok, path} ->
+        message =
+          "\nEdit finished with status '#{status}' - " <>
+          "Daily Log at location #{path} has been updated."
+
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["edit_log" | log_name]) do
+  defp execute_command(["edit_log", log_name, line_num]) do
+    edit = IO.gets("\nEnter your edit: ")
+    line_num = String.to_integer(line_num)
+
+    case {status, path} = JournalManager.edit_daily_log(log_name, line_num, edit) do
+      {:ok, path} ->
+        message =
+          "\nEdit finished with status '#{status}' - " <>
+          "Daily Log at location #{path} has been updated."
+
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["edit_log" | log_name, line_num]) do
+  defp execute_command(["migrate_task", log_from]) do
+    case status = JournalManager.migrate_task(log_from) do
+      :ok ->
+        message =
+          "\nEdit finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["migrate_task" | log_from]) do
+  defp execute_command(["migrate_task", log_from, log_to]) do
+    case status = JournalManager.migrate_task(log_from, log_to) do
+      :ok ->
+        message =
+          "\nEdit finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
   defp execute_command(["view_monthly"]) do
+    case status = JournalManager.display_monthly_log() do
+      :ok ->
+        message =
+          "\nOperation finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
   defp execute_command(["view_daily"]) do
+    case status = JournalManager.display_daily_log() do
+      :ok ->
+        message =
+          "\nOperation finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["view_daily" | log_name]) do
+  defp execute_command(["view_daily", log_name]) do
+    case status = JournalManager.display_daily_log(log_name) do
+      :ok ->
+        message =
+          "\nOperation finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
-  defp execute_command(["view_tasks" | span]) do
+  defp execute_command(["view_tasks"]) do
+    case status = JournalManager.display_tasks() do
+      :ok ->
+        message =
+          "\nOperation finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
+  end
+
+  defp execute_command(["view_tasks", scope]) do
+    case status = JournalManager.display_tasks(scope) do
+      :ok ->
+        message =
+          "\nOperation finished with status '#{status}'."
+        IO.puts(message)
+
+      _ ->
+        message = "\nAn error has occured."
+        IO.puts(message)
+        print_help_message()
+    end
+
+    receive_command()
   end
 
   defp execute_command(_unknown) do

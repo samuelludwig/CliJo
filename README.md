@@ -6,18 +6,18 @@ A Bullet-Journal application for the CLI.
 
 ## Main Functionalities
 
-- Optional automation
+- Optional automation ~~X~~
 - Daily Log
-  - Automatically push dated tasks/events to monthly log
+  - Automatically push dated tasks/events to monthly log ~~X~~
   - Allow nested entries
 - Monthly Log
   - Add/Remove task from log
-- Future Log
+- Future Log ~~X~~
 - Migration
   - Allows migration of a task to a custom destination
   - Will default to the newest monthly log
-- Index View
-  - Show folder structure of journal
+- Index View ~~X~~
+  - Show folder structure of journal ~~X~~
 - Access entries and collections from anywhere on the cli
 - View all tasks for a certain day/week/month
 

@@ -106,7 +106,7 @@ defmodule Clijo.JournalManager do
   @doc since: "July 21st, 2019"
   @spec display_tasks(String.t()) :: atom()
   def display_tasks(scope \\ "day") do
-    {:ok, task_list} = get_tasks(scope)
+    task_list = get_tasks(scope)
     IO.puts(task_list)
   end
 
@@ -129,7 +129,7 @@ defmodule Clijo.JournalManager do
   Returns `{:ok, list_of_unfinished_tasks}` if successful.
   """
   @doc since: "July 21st, 2019"
-  @spec display_tasks(String.t()) :: list()
+  @spec get_tasks(String.t()) :: list()
   def get_tasks(scope \\ "day") do
     month_directory =
       "#{ConfigManager.get_home_directory()}/" <>
@@ -149,7 +149,7 @@ defmodule Clijo.JournalManager do
           log_files
           |> Enum.filter(fn x ->
             Integer.parse(x) != :error &&
-              Integer.parse(x) |> elem(0) < current_day
+              Integer.parse(x) |> elem(0) <= current_day
           end)
           |> Enum.take(-7)
 
