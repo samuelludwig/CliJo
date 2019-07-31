@@ -68,5 +68,36 @@ A Bullet-Journal application for the CLI.
   be persisted in a global struct, I don't think it would necessarily be an
   anti-pattern in my case (but then again, everyone always thinks they're the 
   special case). The only issue is it would effectively double my memory useage, 
-  though on the grand scale it shouldn't matter too much, text is /reasonably/ 
+  though on the grand scale it shouldn't matter too much, text is _reasonably_ 
   low-footprint.
+
+## Why I Might Come Back to this Project in the Future
+
+- To try approaching it in a different manner via Elixir or via another language
+  a la the ideas discussed in the "If I Were to Rewrite This" section. 
+- For a chance to come back to this from a different angle, the code is not too
+  high in spaghetti content, but it could be better. In my current state-of-mind
+  regarding this project I'm much more liable to create spaghetti.
+- To provide proper testing to all functions and functionalities.
+- To give all the code a good SOLID scrubbing and DRYing.
+
+## Why I Might Not Come Back to this Project in the Future
+
+- When I initially embarked on this project, my motivation was partly
+  exploration, to see if I could sucessfully make something in Elixir. I did
+  have a secondary component to my motivation, which was that I was trying to
+  solve a problem I had; I had just started experimenting with Bullet Journaling
+  and realized that there really wasn't any way (that I knew of) of recording
+  "Bullet-Journal-friendly" notes easily on my desktop, where I spend most of my
+  time working. I operated with this motivation for about a month or so- and
+  then I came upon Org-Mode... and suddenly my "problem" was solved. So as a 
+  result I no longer had the "need" motivation; this was ok, I still had my
+  exploratory motivation, so I could survive- but my sails were a little less
+  wind-ful. 
+- It is because of these reasons that trying to make this project more
+  "feature-complete" feels like a bit of an exercise in futility, when something
+  like org-mode (it really is wonderful) can do anything I need and more. This
+  is not to say I am not happy with this project, I really am, it really is one
+  of the first things that I've made that _works_ beyond just being a PoC. And 
+  yet other shores beckon at this moment, there are other things I'd like to 
+  learn/try, the motivation of exploring calls me elsewhere.
